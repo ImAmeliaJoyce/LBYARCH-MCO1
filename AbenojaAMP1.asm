@@ -1,69 +1,97 @@
 ; Abenoja, Amelia Joyce L.      S17
-; Labarrete, Lance Dessmond D.  S17
+; Labarrete, Lance Desmond D.  S17
 
 ; --------------------------
+
+
 %include "io64.inc"
 
 section .text
 global main
 main:
-    ;Asks for user input, an unsigned decimal
-    ;maximum num: 2^(63-1) = 18446744073709551615
-    ;minimum num: 0 or 1?
+    ; Ask for user input, an unsigned decimal
+    ; Maximum num: 2^(63-1) = 9223372036854775807
+    ; Minimum num: 1
+    PRINT_STRING "Sequence: "
     GET_UDEC 8, RAX
-    MOV RBX, RAX        ; copy the original input
     
-    ;Check if the input is odd or even
+    ; Check for negative input
+    CMP RAX, 1
+    JL ERROR_NEGATIVE
+    
+    ; Copy the original input to RBX
+    MOV RBX, RAX
+    
+    ; Output the first term in the sequence
+    PRINT_DEC 8, RBX
+    PRINT_STRING ", "
+    
+    ; Continues sequence until the number is 1
+SEQUENCE_LOOP:
+    ; Check if the current term is 1
+    CMP RBX, 1
+    JE FINALLY  ; if 1, jump to finally
+    
+    ; Check if the current term is even
+    MOV RAX, RBX
     MOV RCX, 2
     MOV RDX, 0
     DIV RCX
     
-    PRINT_STRING "RAX: "
-    PRINT_DEC 8, RAX    ; stores the output
-    NEWLINE
-    PRINT_STRING "RDX: "          
-    PRINT_DEC 8, RDX    ; stores the remainder
-    NEWLINE
-    PRINT_STRING "RCX: "
-    PRINT_DEC 8, RCX    ; holds the divisor
-    NEWLINE
-    
-    CMP RDX, 1
-    JE ODD  ; if odd, jump to odd function
-    
-    ; if even, divide it by two
-    ; STORE THE OUTPUT EARLIER TO RBX
-    MOV RBX, RAX
-    PRINT_STRING "EVEN RAX: "
-    PRINT_DEC 8, RAX
-    NEWLINE
-    PRINT_STRING "EVEN RBX: "
-    PRINT_DEC 8, RBX
-    NEWLINE
-    
+    CMP RDX, 0
+    JE EVEN  ; if even, jump to even section
+    ; Else, it goes directly to ODD
     
 ODD:
     ; triple it and add 1
     MOV RAX, RBX
     MOV RCX, 3
-    MOV RDX, 0x0000_0000_0000_0000 ; contains the higher order of 64-bits
+    MOV RDX, 0  ; contains the higher order of 64-bits
     MUL RCX
     INC RAX
     
-    PRINT_STRING "ODD RAX: "
+    ; Output the current term in the sequence
     PRINT_DEC 8, RAX
+    PRINT_STRING ", "
     
-    
-    ;NEWLINE
-    ;PRINT_STRING "Sequence: "
-    
-    
-OUTPUT:
-    ;PRINT_UDEC 8, RAX
-    ;PRINT_STRING ", "
-    JMP FINALLY
-    
-FINALLY:
+    ; Update RBX to the new term
+    MOV RBX, RAX
+    JMP SEQUENCE_LOOP  ; Continue with the next term in the sequence
 
+EVEN:
+    ; if even, divide it by two
+    MOV RAX, RBX
+    SHR RAX, 1
+    
+    ; Output the current term in the sequence
+    PRINT_DEC 8, RAX
+    PRINT_STRING ", "
+    
+    ; Update RBX to the new term
+    MOV RBX, RAX
+    JMP SEQUENCE_LOOP  ; Continue with the next term in the sequence
+
+FINALLY:
+    NEWLINE
+    ; Prompt the user whether to continue
+    PRINT_STRING "Do you want to continue (Y/N)? "
+    GET_CHAR RAX
+    CMP RAX, 'Y'
+    JE main  ; if 'Y', jump to main (input prompt)
+    
+    ERROR_NEGATIVE:
+    ; Print error message for negative input
+    NEWLINE
+    PRINT_STRING "Error: Negative number input"
+    NEWLINE
+    
+    ; Prompt the user whether to continue
+    PRINT_STRING "Do you want to continue (Y/N)? "
+    GET_CHAR RAX
+    CMP RAX, 'Y'
+    JE main  ; if 'Y', jump to main (input prompt)
+    
+    ; Exit the program
     xor rax, rax
     ret
+
