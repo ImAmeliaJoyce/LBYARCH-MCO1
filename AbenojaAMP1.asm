@@ -3,7 +3,6 @@
 
 ; --------------------------
 
-
 %include "io64.inc"
 
 section .text
@@ -23,15 +22,18 @@ main:
     MOV RBX, RAX
     
     PRINT_STRING "Sequence: "
-    ; Output the first term in the sequence
-    PRINT_DEC 8, RBX
-    PRINT_STRING ", "
-       
+
     ; Continues sequence until the number is 1
 SEQUENCE_LOOP:
+    ; Output the current term in the sequence
+    PRINT_DEC 8, RBX
+    
     ; Check if the current term is 1
     CMP RBX, 1
     JE FINALLY  ; if 1, jump to finally
+    
+    ; If the current term is not 1, print the comma
+    PRINT_STRING ", "
     
     ; Check if the current term is even
     MOV RAX, RBX
@@ -52,10 +54,6 @@ ODD:
     MUL RCX
     INC RAX
     
-    ; Output the current term in the sequence
-    PRINT_DEC 8, RAX
-    PRINT_STRING ", "
-    
     ; Update RBX to the new term
     MOV RBX, RAX
     JMP SEQUENCE_LOOP  ; Continue with the next term in the sequence
@@ -65,10 +63,6 @@ EVEN:
     ; if even, divide it by two
     MOV RAX, RBX
     SHR RAX, 1
-    
-    ; Output the current term in the sequence
-    PRINT_DEC 8, RAX
-    PRINT_STRING ", "
     
     ; Update RBX to the new term
     MOV RBX, RAX
