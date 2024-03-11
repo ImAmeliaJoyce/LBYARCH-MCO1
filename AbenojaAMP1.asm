@@ -12,7 +12,7 @@ main:
     ; Ask for user input, an unsigned decimal
     ; Maximum num: 2^(63-1) = 9223372036854775807
     ; Minimum num: 1
-    PRINT_STRING "Sequence: "
+    PRINT_STRING "Input: "
     GET_UDEC 8, RAX
     
     ; Check for negative input
@@ -22,10 +22,14 @@ main:
     ; Copy the original input to RBX
     MOV RBX, RAX
     
+    PRINT_STRING "Sequence: "
     ; Output the first term in the sequence
     PRINT_DEC 8, RBX
     PRINT_STRING ", "
-    
+
+ADD_COMMA:
+    PRINT_STRING ", "
+       
     ; Continues sequence until the number is 1
 SEQUENCE_LOOP:
     ; Check if the current term is 1
@@ -71,27 +75,40 @@ EVEN:
     MOV RBX, RAX
     JMP SEQUENCE_LOOP  ; Continue with the next term in the sequence
 
-FINALLY:
+
+FINALLY: 
     NEWLINE
     ; Prompt the user whether to continue
     PRINT_STRING "Do you want to continue (Y/N)? "
+    GET_CHAR RDX    ; For 'enter' key 
     GET_CHAR RAX
     CMP RAX, 'Y'
-    JE main  ; if 'Y', jump to main (input prompt)
+    JE main  ; if 'Y', jump to start (input prompt)
     
-    ERROR_NEGATIVE:
+    CMP RAX, 'y'
+    JE main
+    
+    CMP RAX, 'N'
+    JE EXIT
+    
+    CMP RAX, 'n'
+    JE EXIT
+    
+    JMP ERROR_INVALID
+
+ERROR_NEGATIVE:
     ; Print error message for negative input
     NEWLINE
-    PRINT_STRING "Error: Negative number input"
+    PRINT_STRING "Error: Number input is less than 1."
+    JMP FINALLY
+
+ERROR_INVALID:
+    ; Print error message for invalid choice
     NEWLINE
+    PRINT_STRING "Error: Invalid Input. Choose only between Y (to cotinue) or N (to exit the program)."
+    JMP FINALLY
     
-    ; Prompt the user whether to continue
-    PRINT_STRING "Do you want to continue (Y/N)? "
-    GET_CHAR RAX
-    CMP RAX, 'Y'
-    JE main  ; if 'Y', jump to main (input prompt)
-    
+EXIT: 
     ; Exit the program
     xor rax, rax
     ret
-
