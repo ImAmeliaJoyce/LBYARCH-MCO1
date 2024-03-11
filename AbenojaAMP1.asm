@@ -26,9 +26,6 @@ main:
     ; Output the first term in the sequence
     PRINT_DEC 8, RBX
     PRINT_STRING ", "
-
-ADD_COMMA:
-    PRINT_STRING ", "
        
     ; Continues sequence until the number is 1
 SEQUENCE_LOOP:
@@ -46,6 +43,7 @@ SEQUENCE_LOOP:
     JE EVEN  ; if even, jump to even section
     ; Else, it goes directly to ODD
     
+            
 ODD:
     ; triple it and add 1
     MOV RAX, RBX
@@ -61,6 +59,7 @@ ODD:
     ; Update RBX to the new term
     MOV RBX, RAX
     JMP SEQUENCE_LOOP  ; Continue with the next term in the sequence
+
 
 EVEN:
     ; if even, divide it by two
@@ -83,15 +82,9 @@ FINALLY:
     GET_CHAR RDX    ; For 'enter' key 
     GET_CHAR RAX
     CMP RAX, 'Y'
-    JE main  ; if 'Y', jump to start (input prompt)
-    
-    CMP RAX, 'y'
-    JE main
-    
-    CMP RAX, 'N'
-    JE EXIT
-    
-    CMP RAX, 'n'
+    JE main         ; if 'Y', jump to start (input prompt)
+
+    CMP RAX, 'N'    ; if 'N', jump to exit the program
     JE EXIT
     
     JMP ERROR_INVALID
@@ -99,11 +92,11 @@ FINALLY:
 ERROR_NEGATIVE:
     ; Print error message for negative input
     NEWLINE
-    PRINT_STRING "Error: Number input is less than 1."
+    PRINT_STRING "Error: negative number input"
     JMP FINALLY
 
 ERROR_INVALID:
-    ; Print error message for invalid choice
+    ; Print error message for invalid choice in continuing the program
     NEWLINE
     PRINT_STRING "Error: Invalid Input. Choose only between Y (to cotinue) or N (to exit the program)."
     JMP FINALLY
