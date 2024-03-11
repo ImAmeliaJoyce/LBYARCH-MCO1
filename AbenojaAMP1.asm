@@ -9,8 +9,11 @@ section .text
 global main
 main:
     ; Ask for user input, an unsigned decimal
-    ; Maximum num: 2^(63-1) = 9223372036854775807
+    ; Maximum num: 18446744073709551615 = (18.x * 1018)
     ; Minimum num: 1
+    ; 48 = 0
+    ; 49 = 1
+    ; 57 = 9
     PRINT_STRING "Input: "
     GET_UDEC 8, RAX
     
@@ -92,7 +95,7 @@ ERROR_NEGATIVE:
 ERROR_INVALID:
     ; Print error message for invalid choice in continuing the program
     NEWLINE
-    PRINT_STRING "Error: Invalid Input. Choose only between Y (to cotinue) or N (to exit the program)."
+    PRINT_STRING "Error: Invalid input"
     JMP FINALLY
     
 EXIT: 
